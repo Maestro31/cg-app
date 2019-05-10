@@ -12,6 +12,7 @@
 /build
 
 /server/firebase-key.json
+/src/service/Firebase/config.ts
 
 # misc
 .DS_Store

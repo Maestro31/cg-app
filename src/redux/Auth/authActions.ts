@@ -1,7 +1,7 @@
 import { ActionCreator, Dispatch } from 'redux'
 import { ThunkAction } from 'redux-thunk'
 import { getAccounts } from '../../service/facebook'
-import { database, firebase } from '../../service/firebase'
+import { database, firebase } from '../../service/Firebase/firebase'
 import { AuthActions, AuthActionTypes } from './AuthActionTypes'
 import { AuthState } from './authReducer'
 

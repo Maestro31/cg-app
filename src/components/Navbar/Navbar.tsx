@@ -11,14 +11,12 @@ import {
   Popover,
   Position
 } from '@blueprintjs/core'
-import React, { useContext } from 'react'
-import { firebaseApp } from '../../service/firebase'
-import { AuthContext } from '../AuthContext'
+import React from 'react'
+import logo from '../../img/icon128.png'
+import { firebaseApp } from '../../service/Firebase/firebase'
 import UserPhoto from '../UserPhoto'
 
 const NavBar: React.FC = () => {
-  const { currentUser } = useContext(AuthContext)
-
   const logout = () => firebaseApp.auth().signOut()
 
   const ProfileMenu = (
@@ -33,6 +31,7 @@ const NavBar: React.FC = () => {
   return (
     <Navbar>
       <NavbarGroup align={Alignment.LEFT}>
+        <img src={logo} height='30' style={{ marginRight: '10px' }} />
         <NavbarHeading>Config Gamer App</NavbarHeading>
         <NavbarDivider />
         <Button text='Home' icon='home' minimal />

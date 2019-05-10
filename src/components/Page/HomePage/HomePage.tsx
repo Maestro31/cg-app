@@ -1,8 +1,8 @@
 import { Button, Classes, Tab, Tabs } from '@blueprintjs/core'
-import React, { useContext } from 'react'
-import { RouteComponentProps } from 'react-router'
+import React, { useContext, useEffect, useState } from 'react'
+import { Redirect, RouteComponentProps } from 'react-router'
 import Navbar from '../../../components/Navbar'
-import { firebaseApp } from '../../../service/firebase'
+import { database, firebaseApp } from '../../../service/Firebase/firebase'
 import { AuthContext } from '../../AuthContext'
 import { Background } from '../../sharedComponents'
 
@@ -10,12 +10,24 @@ const HomePage: React.ComponentType<RouteComponentProps> = (
   props: RouteComponentProps
 ) => {
   const { currentUser } = useContext(AuthContext)
+  const [isFirstTime, setIsFirstTime] = useState(false)
 
   const logout = () => {
     firebaseApp.auth().signOut()
   }
 
-  console.log(currentUser)
+  useEffect(() => {
+    if (currentUser)
+      database
+        .ref('users')
+        .child(currentUser.uid)
+        .once('value')
+        .then(result => {
+          if (!result.val()) setIsFirstTime(true)
+        })
+  }, [currentUser])
+
+  if (isFirstTime) return <Redirect to='/init' />
 
   return (
     <Background className={Classes.DARK}>

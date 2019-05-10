@@ -1,5 +1,6 @@
 /// <reference types="react-scripts" />
 declare module 'fb-react-sdk'
+declare module 'dotenv'
 
 interface PageAccount {
   providerName: string
