@@ -1,17 +1,18 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Redirect, Route, RouteComponentProps } from 'react-router-dom'
-import { AuthContext } from './AuthContext'
+import { useStore } from 'redhooks'
 
 const PrivateRoute: React.SFC<any> = ({
   component: RouteComponent,
   ...rest
 }: any) => {
-  const { currentUser } = useContext(AuthContext)
+  const { state } = useStore()
+  //const { currentUser } = useContext(AuthContext)
   return (
     <Route
       {...rest}
       render={(routeProps: RouteComponentProps) =>
-        !!currentUser ? (
+        !!state.auth.currentUser ? (
           <RouteComponent {...routeProps} />
         ) : (
           <Redirect to='/login' />

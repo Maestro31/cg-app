@@ -2,16 +2,16 @@ import { Reducer } from 'redux'
 import { AuthActions, AuthActionTypes } from './AuthActionTypes'
 
 export interface AuthState {
-  isLoggingSuccess: boolean
-  isLoggingFailed: boolean
+  isLoading: boolean
   errorMessage: string
   accountFBAccessToken: string
   pageFBAccessToken: string
+  currentUser: firebase.User | null
 }
 
 const initialState: AuthState = {
-  isLoggingSuccess: false,
-  isLoggingFailed: false,
+  isLoading: false,
+  currentUser: null,
   errorMessage: '',
   accountFBAccessToken: '',
   pageFBAccessToken: ''
@@ -22,17 +22,38 @@ export const authReducer: Reducer<AuthState, AuthActions> = (
   action
 ) => {
   switch (action.type) {
+    case AuthActionTypes.LOADING:
+      return {
+        ...initialState,
+        isLoading: true
+      }
     case AuthActionTypes.LOGGING_FAILED:
       return {
         ...initialState,
-        isLoggingFailed: true,
         errorMessage: action.payload
       }
 
     case AuthActionTypes.LOGGING_SUCCESS:
       return {
         ...initialState,
-        isLoggingSuccess: true
+        isLogged: true,
+        currentUser: action.payload
+      }
+
+    case AuthActionTypes.DISCONNECT:
+      return {
+        ...initialState,
+        isLoading: false
+      }
+    case AuthActionTypes.LINK_ACCOUNT_SUCCESS:
+      return {
+        ...state,
+        currentUser: action.payload
+      }
+    case AuthActionTypes.UNLINK_ACCOUNT_SUCCESS:
+      return {
+        ...state,
+        currentUser: action.payload
       }
 
     default:

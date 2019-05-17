@@ -1,16 +1,18 @@
-import { applyMiddleware, combineReducers, createStore, Store } from 'redux'
+import { combineReducers, createStore } from 'redhooks'
 import thunk from 'redux-thunk'
 import authReducer, { AuthState } from '../Auth/authReducer'
+import teamReducer, { TeamState } from '../Team/teamReducer'
 
 export interface AppState {
   auth: AuthState
+  team: TeamState
 }
 
-const rootReducer = combineReducers<AppState>({
-  auth: authReducer
+export const rootReducer = combineReducers({
+  auth: authReducer,
+  team: teamReducer
 })
 
-export default function configureStore(): Store<AppState, any> {
-  const store = createStore(rootReducer, undefined, applyMiddleware(thunk))
-  return store
-}
+const store = createStore(rootReducer, { middlewares: [thunk] })
+
+export default store

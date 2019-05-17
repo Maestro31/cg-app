@@ -1,14 +1,15 @@
 export enum AuthActionTypes {
   LOGGING_SUCCESS = 'LOGGING_SUCCESS',
-  LOGGING_FAILED = 'LOGGING_FAILED'
+  LOGGING_FAILED = 'LOGGING_FAILED',
+  LOADING = 'LOADING',
+  DISCONNECT = 'DISCONNECT',
+  LINK_ACCOUNT_SUCCESS = 'LINK_ACCOUNT_SUCCESS',
+  UNLINK_ACCOUNT_SUCCESS = 'UNLINK_ACCOUNT_SUCCESS'
 }
 
 interface LoggingSuccessAction {
   type: AuthActionTypes.LOGGING_SUCCESS
-  payload: {
-    fbAccessToken: string
-    pageFBAccessToken: string
-  }
+  payload: firebase.User
 }
 
 interface LoggingFailedAction {
@@ -16,4 +17,28 @@ interface LoggingFailedAction {
   payload: string
 }
 
-export type AuthActions = LoggingSuccessAction | LoggingFailedAction
+interface DisconnectAction {
+  type: AuthActionTypes.DISCONNECT
+}
+
+interface LoadingAction {
+  type: AuthActionTypes.LOADING
+}
+
+interface LinkAccountSuccessAction {
+  type: AuthActionTypes.LINK_ACCOUNT_SUCCESS,
+  payload: firebase.User
+}
+
+interface UnLinkAccountSuccessAction {
+  type: AuthActionTypes.UNLINK_ACCOUNT_SUCCESS,
+  payload: firebase.User
+}
+
+export type AuthActions =
+  | LoggingSuccessAction
+  | LoggingFailedAction
+  | DisconnectAction
+  | LoadingAction
+  | LinkAccountSuccessAction
+  | UnLinkAccountSuccessAction

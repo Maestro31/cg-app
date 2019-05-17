@@ -1,13 +1,13 @@
-import { Classes, Elevation } from '@blueprintjs/core'
+import { Classes, Elevation, Intent, Spinner } from '@blueprintjs/core'
 import {
   faFacebookSquare,
   faGoogle,
   faTwitter
 } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { ChangeEvent, useContext, useState } from 'react'
-import { connect } from 'react-redux'
-import { Redirect } from 'react-router'
+import React, { ChangeEvent, useState } from 'react'
+import { Redirect } from 'react-router-dom'
+import { connect } from 'redhooks'
 import { ThunkDispatch } from 'redux-thunk'
 import {
   createAccount,
@@ -18,19 +18,20 @@ import {
 } from '../../../redux/Auth/authActions'
 import { AuthState } from '../../../redux/Auth/authReducer'
 import { AppState } from '../../../redux/reducers'
-import { AuthContext } from '../../AuthContext'
 import * as S from './styles'
 
+interface StateProps {
+  auth: AuthState
+}
 interface DispatchProps {
   facebookLogin: typeof facebookLogin
   twitterLogin: typeof twitterLogin
   googleLogin: typeof googleLogin
   createAccount: typeof createAccount
   emailAndPasswordLogin: typeof emailAndPasswordLogin
-  auth: AuthState
 }
 
-type Props = DispatchProps
+type Props = StateProps & DispatchProps
 
 const LoginPage: React.ComponentType<Props> = (props: Props) => {
   const {
@@ -46,10 +47,6 @@ const LoginPage: React.ComponentType<Props> = (props: Props) => {
   const [passwordVerify, setPasswordVerify] = useState('')
   const [isNewAccount, setIsNewAccount] = useState(false)
   const [errorMessage, setErrorMessage] = useState(auth.errorMessage)
-
-  const { currentUser } = useContext(AuthContext)
-
-  if (currentUser) return <Redirect to='/' />
 
   function handleSubmit() {
     if (!isNewAccount) emailAndPasswordLogin(email, password)
@@ -69,81 +66,92 @@ const LoginPage: React.ComponentType<Props> = (props: Props) => {
     setErrorMessage('')
   }
 
+  if (auth.currentUser) return <Redirect to='/home' />
+
   return (
     <S.Background className={Classes.DARK}>
       <S.LoginLayout elevation={Elevation.ONE}>
-        <h5>Connexion</h5>
-        <S.FacebookButton
-          large
-          icon={<FontAwesomeIcon icon={faFacebookSquare} />}
-          text='Se connecter à Facebook'
-          onClick={facebookLogin}
-        />
-        <S.TwitterButton
-          large
-          icon={<FontAwesomeIcon icon={faTwitter} />}
-          text='Se connecter à Twitter'
-          onClick={twitterLogin}
-        />
-        <S.GoogleButton
-          large
-          icon={<FontAwesomeIcon icon={faGoogle} />}
-          text='Se connecter à Google'
-          onClick={googleLogin}
-          style={{ marginBottom: '30px' }}
-        />
-        <S.Input
-          leftIcon='user'
-          placeholder='Email...'
-          large
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setEmail(e.target.value)
-          }
-          value={email}
-          required
-        />
-        <S.Input
-          leftIcon='lock'
-          placeholder='Mot de passe...'
-          large
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setPassword(e.target.value)
-          }
-          value={password}
-          type='password'
-          required
-        />
-        {isNewAccount && (
-          <S.Input
-            placeholder='Retapez le mot de passe...'
-            large
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setPasswordVerify(e.target.value)
-            }
-            value={passwordVerify}
-            type='password'
-            required
-          />
-        )}
-        {!isNewAccount ? (
-          <>
-            <S.CreateAccountButton text='Se connecter' onClick={handleSubmit} />
-            <S.ConnectLink onClick={handleCreateAccountSwitch}>
-              Je créé un compte
-            </S.ConnectLink>
-          </>
+        {auth.isLoading ? (
+          <Spinner intent={Intent.PRIMARY} size={50} />
         ) : (
           <>
-            <S.CreateAccountButton
-              text='Créer un compte'
-              onClick={handleSubmit}
+            <h5>Connexion</h5>
+            <S.FacebookButton
+              large
+              icon={<FontAwesomeIcon icon={faFacebookSquare} />}
+              text='Se connecter à Facebook'
+              onClick={facebookLogin}
             />
-            <S.ConnectLink onClick={() => setIsNewAccount(false)}>
-              J'ai déjà un compte
-            </S.ConnectLink>
+            <S.TwitterButton
+              large
+              icon={<FontAwesomeIcon icon={faTwitter} />}
+              text='Se connecter à Twitter'
+              onClick={twitterLogin}
+            />
+            <S.GoogleButton
+              large
+              icon={<FontAwesomeIcon icon={faGoogle} />}
+              text='Se connecter à Google'
+              onClick={googleLogin}
+              style={{ marginBottom: '30px' }}
+            />
+            <S.Input
+              leftIcon='user'
+              placeholder='Email...'
+              large
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setEmail(e.target.value)
+              }
+              value={email}
+              required
+            />
+            <S.Input
+              leftIcon='lock'
+              placeholder='Mot de passe...'
+              large
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setPassword(e.target.value)
+              }
+              value={password}
+              type='password'
+              required
+            />
+            {isNewAccount && (
+              <S.Input
+                placeholder='Retapez le mot de passe...'
+                large
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setPasswordVerify(e.target.value)
+                }
+                value={passwordVerify}
+                type='password'
+                required
+              />
+            )}
+            {!isNewAccount ? (
+              <>
+                <S.CreateAccountButton
+                  text='Se connecter'
+                  onClick={handleSubmit}
+                />
+                <S.ConnectLink onClick={handleCreateAccountSwitch}>
+                  Je créé un compte
+                </S.ConnectLink>
+              </>
+            ) : (
+              <>
+                <S.CreateAccountButton
+                  text='Créer un compte'
+                  onClick={handleSubmit}
+                />
+                <S.ConnectLink onClick={() => setIsNewAccount(false)}>
+                  J'ai déjà un compte
+                </S.ConnectLink>
+              </>
+            )}
+            <p style={{ color: 'red' }}>{errorMessage || auth.errorMessage}</p>
           </>
         )}
-        <p style={{ color: 'red' }}>{errorMessage || auth.errorMessage}</p>
       </S.LoginLayout>
     </S.Background>
   )

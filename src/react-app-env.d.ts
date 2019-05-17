@@ -1,19 +1,9 @@
 /// <reference types="react-scripts" />
 declare module 'fb-react-sdk'
-declare module 'dotenv'
+declare module 'redhooks'
 
-interface PageAccount {
-  providerName: string
-  id: string
+interface Team {
   name: string
-  access_token: string
-}
-
-interface AccountData {
-  id: string
-  name: string
-  email: string
-  avatar: string
-  access_token: string
-  pageAccounts: PageAccount[]
+  members: {}
+  owner: string
 }
